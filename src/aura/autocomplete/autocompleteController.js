@@ -1,5 +1,5 @@
 ({
-    doInit: function (component, event, helper) {
+    doInit: function (component) {
         var inputCmp = component.find('input');
 
         if (inputCmp) {
@@ -13,10 +13,10 @@
         var makeDelay = function () {
             var timer = 0;
             return function(callback, ms){
-                clearTimeout(timer);
-                timer = setTimeout(callback, ms);
+                window.clearTimeout(timer);
+                timer = window.setTimeout(callback, ms);
             };
-        }
+        };
 
         component._delay = makeDelay(); // this one is for pausing before doing autocomplete
         component._focus = makeDelay(); // this one is to accumulate focus/blur events to determine if component has focus
@@ -38,6 +38,7 @@
     },
 
     handleInputFocus: function (component, event, helper) {
+        component.set('v.focused', true);
         var inputCmp = component.find('input');
         if ('' !== inputCmp.get('v.value')) {
             helper.setListVisibilityDelayed(component, true);
@@ -45,14 +46,17 @@
     },
 
     handleInputBlur: function (component, event, helper) {
+        component.set('v.focused', false);
         helper.setListVisibilityDelayed(component, false);
     },
 
     handleListFocus: function (component, event, helper) {
+        component.set('v.focused', true);
         helper.setListVisibilityDelayed(component, true);
     },
 
     handleListBlur: function (component, event, helper) {
+        component.set('v.focused', false);
         helper.setListVisibilityDelayed(component, false);
     },
 
@@ -63,7 +67,7 @@
         helper.setListVisibilityDelayed(component, false);
     },
 
-    handleRemovePill: function (component, event, helper) {
+    handleRemovePill: function (component) {
         component.set('v.value', '');
         component.set('v.displayValue', '');
         component.set('v.keyword', '');
